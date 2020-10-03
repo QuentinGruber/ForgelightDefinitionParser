@@ -24,7 +24,7 @@ def ExtractData(filepath):
         return Data
 
 
-def GenerateMdFiles(directory, outdirectory):
+def GenerateMdFiles(directory, outdirectory, wikilink):
     pathlist = Path(directory).rglob('*.txt')
     for path in pathlist:
         # because path is object not string
@@ -53,12 +53,12 @@ def GenerateMdFiles(directory, outdirectory):
             md_data += "|\n"
         if pathos.isdir(outdirectory) is not True:
             mkdir(outdirectory)
-        with open(outdirectory+"/" + data.name + '.md', 'a', encoding='utf-8') as f:
+        with open(outdirectory+"/" + data.name + "_"+outdirectory + '.md', 'a', encoding='utf-8') as f:
             f.write(md_data)
-    GenerateIndexFile(outdirectory)
+    GenerateIndexFile(outdirectory, wikilink)
 
 
-def GenerateIndexFile(dataDirectory):
+def GenerateIndexFile(dataDirectory, wikilink):
     if pathos.isdir(dataDirectory) is not True:
         print("data directory doesn't exist")
         exit(1)
@@ -68,8 +68,9 @@ def GenerateIndexFile(dataDirectory):
     for path in pathlist:
         path_in_str = str(path)
         with open(path_in_str, 'r', encoding='utf-8') as f:
-            indexFile += "* ["+path_in_str[len(dataDirectory)+1:-3] + \
-                "]"+"("+path_in_str+")" + "\n"
+            filename = path_in_str[len(dataDirectory)+1:-3]
+            indexFile += "* ["+filename + \
+                "]"+"("+wikilink+filename+")" + "\n"
 
     with open(dataDirectory+".md", 'w+', encoding='utf-8') as f:
         f.write(indexFile)
