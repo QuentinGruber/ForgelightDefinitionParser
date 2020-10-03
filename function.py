@@ -35,7 +35,7 @@ def GenerateMdFiles(directory, outdirectory):
 
         # Title
 
-        md_data += "# " + data.name + "\n"
+        # md_data += "# " + data.name + "\n"
 
         # table headers
         for header in data.headers:
@@ -51,8 +51,25 @@ def GenerateMdFiles(directory, outdirectory):
             for value in item:
                 md_data += "| " + value
             md_data += "|\n"
-        print(md_data)
         if pathos.isdir(outdirectory) is not True:
             mkdir(outdirectory)
-        with open("md_data/" + data.name + '.md', 'a', encoding='utf-8') as f:
+        with open(outdirectory+"/" + data.name + '.md', 'a', encoding='utf-8') as f:
             f.write(md_data)
+    GenerateIndexFile(outdirectory)
+
+
+def GenerateIndexFile(dataDirectory):
+    if pathos.isdir(dataDirectory) is not True:
+        print("data directory doesn't exist")
+        exit(1)
+    pathlist = Path(dataDirectory).rglob('*.md')
+    print("Creating index file")
+    indexFile = ""
+    for path in pathlist:
+        path_in_str = str(path)
+        with open(path_in_str, 'r', encoding='utf-8') as f:
+            indexFile += "* ["+path_in_str[len(dataDirectory)+1:-3] + \
+                "]"+"("+path_in_str+")" + "\n"
+
+    with open(dataDirectory+".md", 'w+', encoding='utf-8') as f:
+        f.write(indexFile)
